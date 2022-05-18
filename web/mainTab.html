@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>METATOPIA</title>
+    <script src = "https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+</head>
+<body>
+    <div>
+        <p>Wallet address - <span id = "wallet-address"></span></p>
+        <p>Left Nfts - <span id = "nftnum">0</span></p>
+        <button id ="mint">Start Minting </button> 
+    </div>
+    <script type="text/javascript">
+        
+        var account = null;
+        var contract = null;
+        const ABI = [
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferred",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+];
+    
+        const ADDRESS = "0x9d83e140330758a8fFD07F8Bd73e86ebcA8a5692";
+        (async() => {
+            if(window.ethereum) {
+                await window.ethereum.send('eth_requestAccounts');
+                window.web3 = new Web3(window.ethereum)
+
+                var accounts = await web3.eth.getAccounts();
+                account = accounts[0]
+                document.getElementById('wallet-address').textContent = account;
+                
+
+                contract = new web3.eth.Contract(ABI,ADDRESS);
+
+                document.getElementById('mint').onclick = () => {
+                    contract.methods.safeMint(account).send({from : account, value: "10000000000"});
+                }
+                
+				// updateCurrentCount();
+                // document.getElementById('Increase-count').onclick = () => {
+                //    increaseCurrentCount();
+                // }
+
+                // address 0x9d83e140330758a8fFD07F8Bd73e86ebcA8a5692 ,, 0xA3295a9dE4Bb214c7facD28eF3809b0875a5Aa3e
+            }
+        })();
+
+        const deploy = async (ABI, bytecode) => {
+            var deployingContract = new web3.eth.Contract(abi).deploy({
+                data: bytecode,
+                arguments: []
+            });
+            var estimatedGas = await deployingContract.estimatedGas();
+
+            var deployedContract = await deployingContract.send({
+                from: account,
+                gas: estimatedGas
+            })
+
+            console.log("Address - " + deployedContract.options.address);
+
+            return deployed.options.address;
+        }
+
+    </script>
+</body>
+</html>
